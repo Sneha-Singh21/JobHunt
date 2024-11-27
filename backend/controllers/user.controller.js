@@ -71,7 +71,7 @@ export const loginUser = async (req, res) => {
     }
 
     // check if role is correct or not
-    if (role === user.role) {
+    if (role != user.role) {
       return res.status(400).json({
         success: false,
         message: "Account doesn't exist with current role.",
@@ -125,35 +125,38 @@ export const logoutUser = async (req, res) => {
 // update user profile
 export const updateProfile = async (req, res) => {
   try {
-    const { fullName, email, phoneNumber, password, role } = req.body;
+    const { fullName, email, phoneNumber, password, role, skills, bio } = req.body; // Fixed
     const file = req.file;
-    if (!fullName || !email || !phoneNumber || !password || !role) {
-      return res.status(400).json({
-        success: false,
-        message: "Something is missing",
-      });
+
+    // Handle file upload logic here if necessary
+    if (file) {
+      // Cloudinary or local file upload logic can be added
     }
 
-    // cloudiary file will come here
+    let skillsArray;
+    if (skills) {
+      skillsArray = skills.split(",");
+    }
 
-    const skillsArray = skills.split(",");
-    const userId = req.id; // we will come to it later after middleware authentication
-
+    const userId = req.id; // Set by middleware
     let user = await User.findById(userId);
     if (!user) {
       return res
-        .status(400)
+        .status(404)
         .json({ success: false, message: "User not found." });
     }
 
-    // updating user data
-    (user.fullName = fullName),
-      (user.email = email),
-      (user.phoneNumber = phoneNumber),
-      (user.profile.bio = bio),
-      (user.profile.skills = skillsArray);
+    // Update user data
+    if (fullName) user.fullName = fullName;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (bio) user.profile.bio = bio;
+    if (skills) user.profile.skills = skillsArray;
 
-    // resume will come here later in this section
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10); // Hash password
+      user.password = hashedPassword;
+    }
 
     await user.save();
 
@@ -169,8 +172,14 @@ export const updateProfile = async (req, res) => {
     return res
       .status(200)
       .json({ success: true, user, message: "Profile updated successfully" });
+
   } catch (error) {
-    console.log(error);
-    return res.json({ success: false, message: "Something went wrong" });
+    console.error(error);
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: error.message || "Something went wrong",
+      });
   }
 };
