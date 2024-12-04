@@ -4,9 +4,14 @@ import { Label } from "../ui/label.jsx";
 import { Input } from "../ui/input.jsx";
 import { RadioGroup } from "../ui/radio-group.jsx";
 import { Button } from "../ui/button.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { USER_API_END_POINT } from "@/utils/constant.js";
 import axios from "axios";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { setLoading } from "@/redux/authSlice.js";
+import Footer from "../shared/Footer.jsx";
 
 const Signup = () => {
   // taking data from the form
@@ -19,6 +24,10 @@ const Signup = () => {
     file: "",
   });
 
+  const { loading } = useSelector((store) => store.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -29,29 +38,45 @@ const Signup = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const formData = new formData();
+
+    const formData = new FormData();
     formData.append("fullName", input.fullName);
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("password", input.password);
     formData.append("role", input.role);
 
-    if(input.file) {
+    if (input.file) {
       formData.append("file", input.file);
     }
 
     try {
+      dispatch(setLoading(true));
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-        headers:{
-          "Content-Type":"multipart/formdata"
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        withCredentials:true,
-      })
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        navigate("/login");
+        toast.success(res.data.message);
+      }
     } catch (error) {
-      console.log(error);
-      
+      if (error.response) {
+        toast.error(error.response.data.message);
+      } else if (error.request) {
+        console.error("No response received:", error.request);
+        toast.error("No response from server");
+      } else {
+        console.error("Error:", error.message);
+        toast.error("An error occurred");
+      }
+    } finally {
+      dispatch(setLoading(false));
     }
-  } 
+  };
 
   return (
     <div>
@@ -115,7 +140,7 @@ const Signup = () => {
                   type="radio"
                   name="role"
                   value="student"
-                  checked={input.role === 'student'}
+                  checked={input.role === "student"}
                   onChange={changeEventHandler}
                   className="cursor-pointer"
                 />
@@ -126,7 +151,7 @@ const Signup = () => {
                   type="radio"
                   name="role"
                   value="recruiter"
-                  checked={input.role === 'recruiter'}
+                  checked={input.role === "recruiter"}
                   onChange={changeEventHandler}
                   className="cursor-pointer"
                 />
@@ -137,17 +162,34 @@ const Signup = () => {
             {/* profile code section */}
             <div className="flex items-center gap-2">
               <Label>Profile</Label>
-              <Input accept="image/*" type="file" onChange={changeFileHandler} className="cursor-pointer" />
+              <Input
+                accept="image/*"
+                type="file"
+                onChange={changeFileHandler}
+                className="cursor-pointer"
+              />
             </div>
           </div>
-          <div className="flex justify-center my-3 mb-10">
-            <Button
-              type="submit"
-              className="text-[16px] px-24 py-5 border rounded-[5px] bg-[#ad38c2] hover:bg-[#882599] text-white"
-            >
-              Signup
-            </Button>
-          </div>
+
+          {/* loader code */}
+          {loading ? (
+            <div className="flex justify-center my-3 mb-10">
+              <Button className="text-[16px] px-24 py-5 border rounded-[5px] bg-[#ad38c2] text-white">
+                {" "}
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait...{" "}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex justify-center my-3 mb-10">
+              <Button
+                type="submit"
+                className="text-[16px] px-24 py-5 border rounded-[5px] bg-[#ad38c2] hover:bg-[#882599] text-white"
+              >
+                Signup
+              </Button>
+            </div>
+          )}
+
           <span className="text-[14px]">
             Already have an account?{" "}
             <Link
@@ -159,6 +201,7 @@ const Signup = () => {
           </span>
         </form>
       </div>
+      <Footer/>
     </div>
   );
 };
