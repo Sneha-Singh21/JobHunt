@@ -174,7 +174,7 @@ const Signup = () => {
           {/* loader code */}
           {loading ? (
             <div className="flex justify-center my-3 mb-10">
-              <Button className="text-[16px] px-24 py-5 border rounded-[5px] bg-[#ad38c2] text-white">
+              <Button className="text-[16px] px-24 py-5 border rounded-[5px] bg-[#ad38c2] hover:bg-[#ad38c2] text-white hover:text-white ">
                 {" "}
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait...{" "}
               </Button>

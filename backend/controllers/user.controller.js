@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import getDataUri from "../config/DataUri.js";
+import cloudinary from "../config/cloudinary.js";
 
 // register user controller
 export const registerUser = async (req, res) => {
@@ -12,6 +14,13 @@ export const registerUser = async (req, res) => {
         message: "Something is missing",
       });
     }
+
+    // Handle file upload logic here if necessary
+    const file = req.file;
+    const fileUri = getDataUri(file);
+    // console.log(fileUri);
+
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
     // check if the user already exist or not
     const user = await User.findOne({ email });
@@ -30,6 +39,9 @@ export const registerUser = async (req, res) => {
       phoneNumber,
       password: hashedPassword,
       role,
+      profile: {
+        profilePhoto: cloudResponse.secure_url,
+      },
     });
 
     return res
@@ -125,13 +137,14 @@ export const logoutUser = async (req, res) => {
 // update user profile
 export const updateProfile = async (req, res) => {
   try {
-    const { fullName, email, phoneNumber, password, role, skills, bio } = req.body; // Fixed
-    const file = req.file;
+    const { fullName, email, phoneNumber, password, skills, bio } = req.body; // Fixed
 
     // Handle file upload logic here if necessary
-    if (file) {
-      // Cloudinary or local file upload logic can be added
-    }
+    const file = req.file;
+    const fileUri = getDataUri(file);
+    // console.log(fileUri);
+
+    const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
     let skillsArray;
     if (skills) {
@@ -158,6 +171,12 @@ export const updateProfile = async (req, res) => {
       user.password = hashedPassword;
     }
 
+    // resume comes later here...
+    if (cloudResponse) {
+      user.profile.resume = cloudResponse.secure_url; // save the Cloudinary URL
+      user.profile.resumeOriginalName = file.originalname; // save the original file name
+    }
+
     await user.save();
 
     user = {
@@ -172,14 +191,11 @@ export const updateProfile = async (req, res) => {
     return res
       .status(200)
       .json({ success: true, user, message: "Profile updated successfully" });
-
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: error.message || "Something went wrong",
-      });
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Something went wrong",
+    });
   }
 };

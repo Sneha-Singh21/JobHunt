@@ -8,6 +8,8 @@ import Jobs from './components/Jobs.jsx';
 import Browse from './components/Browse.jsx';
 import Profile from './components/Profile.jsx';
 import JobDescription from './components/shared/JobDescription.jsx';
+import Companies from './components/admin/Companies.jsx';
+import CreateCompany from './components/admin/CreateCompany.jsx';
 
 
 const appRouter = createBrowserRouter([
@@ -39,6 +41,16 @@ const appRouter = createBrowserRouter([
     path:'/profile',
     element:<Profile/>
   },
+  // admin ke liye yha se start hoga
+  {
+    path:'/admin/companies',
+    element:<Companies/>
+  },
+  {
+    path:'/admin/companies/create',
+    element:<CreateCompany/>
+  },
+ 
 ])
 
 const App = () => {
