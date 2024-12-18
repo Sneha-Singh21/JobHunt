@@ -14,6 +14,7 @@ export const postJob = async (req, res) => {
       position,
       companyId,
     } = req.body;
+    
     const userId = req.id;
 
     if (
@@ -110,9 +111,14 @@ export const getJobsById = async (req, res) => {
 export const getAdminJobs = async (req, res) => {
   try {
     const adminId = req.id;
-    const jobs = await Job.find({ created_by: adminId });
+    // console.log("Admin ID:", adminId); 
 
-    if (!jobs) {
+    const jobs = await Job.find({ created_by: (adminId) }).populate({
+      path:'company',
+      createdAt:-1,
+    });
+
+    if (!jobs || jobs.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Jobs not found.",
@@ -121,7 +127,11 @@ export const getAdminJobs = async (req, res) => {
 
     return res.status(200).json({ success: true, jobs });
   } catch (error) {
-    console.log(error);
-    return res.json({ success: false, message: "Error in finding admin job." });
+    // console.error("Error in getAdminJobs:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error in finding admin jobs.",
+    });
   }
 };
+

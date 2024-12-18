@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../shared/Navbar.jsx";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import CompaniesTable from "./CompaniesTable.jsx";
 import { useNavigate } from "react-router-dom";
-import useGetAllCompanies from "@/hooks/useGetAllCompanies.jsx";
 import { useDispatch } from "react-redux";
-import { setSearchCompanyByText } from "@/redux/companySlice.js";
+import AdminJobsTable from "./AdminJobsTable.jsx";
+import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs.jsx";
+import { setSearchJobByText } from "@/redux/jobSlice.js";
 
-const Companies = () => {
-  useGetAllCompanies();
+const AdminJobs = () => {
+  useGetAllAdminJobs();
   const [input, setInput] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setSearchCompanyByText(input));
+    dispatch(setSearchJobByText(input));
   }, [input]);
 
   return (
@@ -23,19 +23,19 @@ const Companies = () => {
       <Navbar />
       <div className="max-w-5xl mx-auto my-10">
         <div className="flex items-center justify-between my-8">
-          <Input onChange={(e) => setInput(e.target.value)} className="w-fit shadow-md" placeholder="Filter by name" />
+          <Input onChange={(e) => setInput(e.target.value)} className="w-fit shadow-md" placeholder="Filter by name, role" />
           <Button
-            onClick={() => navigate("/admin/companies/create")}
+            onClick={() => navigate("/admin/jobs/post")}
             className="bg-[#ad38c2] hover:bg-[#882599] text-white hover:text-white"
             variant="outline"
           >
-            New Company
+            Post New Job
           </Button>
         </div>
-        <CompaniesTable />
+        <AdminJobsTable />
       </div>
     </div>
   );
 };
 
-export default Companies;
+export default AdminJobs;

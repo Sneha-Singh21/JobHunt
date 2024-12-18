@@ -142,7 +142,6 @@ export const updateProfile = async (req, res) => {
     // Handle file upload logic here if necessary
     const file = req.file;
     const fileUri = getDataUri(file);
-    // console.log(fileUri);
 
     const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
