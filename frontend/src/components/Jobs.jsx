@@ -21,8 +21,8 @@ const Jobs = () => {
           {allJobs.length <= 0 ? (
             <span>Job not found</span>
           ) : (
-            <div className="flex-1 h-[88vh] mt-6 overflow-y-auto pb-5">
-              <div className="grid grid-cols-3 gap-4 scroll-container overflow-y-auto h-[calc(100vh-100px)]">
+            <div className="flex-1 h-[90vh] mt-10 overflow-y-auto pb-5">
+              <div className="grid grid-cols-2 gap-6 scroll-container overflow-y-auto h-[calc(100vh-100px)]">
                 {allJobs.map((job) => (
                   <div key={job?._id}>
                     <CardForJob job={job} />

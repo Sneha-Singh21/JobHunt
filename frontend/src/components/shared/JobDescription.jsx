@@ -16,16 +16,46 @@ const JobDescription = () => {
   const { user } = useSelector((store) => store.auth);
 
   const navigate = useNavigate();
-  const isInitiallyApplied =
-    singleJob?.applications?.some(
-      (application) => application?.applicant === user?._id
-    ) || false;
-
-  const [isApplied, setIsApplied] = useState(isInitiallyApplied);
-
   const params = useParams();
   const jobId = params.id;
   const dispatch = useDispatch();
+
+  const [isApplied, setIsApplied] = useState(false);
+  const [hasDeletedApplication, setHasDeletedApplication] = useState(false);
+
+  const { _id: userId } = user || {};
+
+  useEffect(() => {
+    const fetchJobDetails = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
+          withCredentials: true,
+        });
+
+        if (res.data.success) {
+          dispatch(setSingleJob(res.data.job));
+
+          // Check if the user has applied for the job before
+          const application = res.data.job.applications?.find(
+            (application) => application.applicant === userId
+          );
+
+          // If application exists, set isApplied to true
+          if (application) {
+            setIsApplied(true);
+            setHasDeletedApplication(false); // No need to re-apply if application exists
+          } else {
+            setIsApplied(false);
+            setHasDeletedApplication(false); // User has never applied
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchJobDetails();
+  }, [jobId, dispatch, userId]);
 
   const applyJobHandler = async () => {
     try {
@@ -35,46 +65,46 @@ const JobDescription = () => {
       );
 
       if (res.data.success) {
-        setIsApplied(true);
+        setIsApplied(true); // User has applied
+        setHasDeletedApplication(false); // Reset the "deleted" flag
+
         const updatedSingleJob = {
           ...singleJob,
           applications: [
             ...(singleJob?.applications || []),
-            { applicant: user?._id },
+            { applicant: userId },
           ],
         };
         dispatch(setSingleJob(updatedSingleJob));
         toast.success(res.data.message);
       }
     } catch (error) {
-      console.error(error); // Logs the full error object for debugging
+      console.error(error);
       toast.error(
         error.response?.data?.message || "Something went wrong while applying!"
-      ); // Shows a user-friendly error message
+      );
     }
   };
 
-  const { _id: userId } = user || {};
-  useEffect(() => {
-    const fetchAllJobs = async () => {
-      try {
-        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
-          withCredentials: true,
-        });
-        if (res.data.success) {
-          dispatch(setSingleJob(res.data.job));
-          setIsApplied(
-            res.data.job.applications?.some(
-              (application) => application.applicant === userId
-            )
-          );
-        }
-      } catch (error) {
-        console.error(error);
+  const handleDeleteApplication = async () => {
+    try {
+      const res = await axios.delete(
+        `${APPLICATION_API_END_POINT}/delete/${jobId}`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        setIsApplied(false); // Reset application status
+        setHasDeletedApplication(true); // Allow re-apply only after deletion
+        toast.success(res.data.message);
       }
-    };
-    fetchAllJobs();
-  }, [jobId, dispatch, userId]);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        error.response?.data?.message || "Something went wrong while deleting!"
+      );
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto my-10">
@@ -95,7 +125,7 @@ const JobDescription = () => {
         </div>
 
         <Button
-          onClick={isApplied ? () => {} : applyJobHandler}
+          onClick={isApplied ? handleDeleteApplication : applyJobHandler}
           aria-disabled={isApplied}
           className={`rounded-[8px] ${
             isApplied
@@ -104,7 +134,11 @@ const JobDescription = () => {
           }`}
           variant="outline"
         >
-          {isApplied ? "Already Applied" : "Apply Now"}
+          {isApplied
+            ? "Already Applied"
+            : hasDeletedApplication
+            ? "Re-apply"
+            : "Apply Now"}
         </Button>
       </div>
 

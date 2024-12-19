@@ -8,16 +8,32 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { Avatar, AvatarImage } from "../ui/avatar";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Edit2, Eye, MoreHorizontal } from "lucide-react";
+import { Edit2, Eye, MoreHorizontal, Trash } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { JOB_API_END_POINT } from "@/utils/constant";
+import { removeJob } from "@/redux/jobSlice";
 
 const AdminJobsTable = () => {
   const { allAdminJobs, searchJobByText } = useSelector((store) => store.job);
   const [filterJobs, setFilterJobs] = useState(allAdminJobs);
   const navigate = useNavigate();
+
+  const handleDeleteJob = async (jobId) => {
+    try {
+      const res = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        dispatch(removeJob(jobId));
+      }
+    } catch (error) {
+      console.error("Error deleting job:", error);
+    }
+  };
 
   useEffect(() => {
     if (Array.isArray(allAdminJobs)) {
@@ -74,6 +90,13 @@ const AdminJobsTable = () => {
                         >
                           <Edit2 className="w-4" />
                           <span>Edit</span>
+                        </div>
+                        <div
+                          onClick={() => handleDeleteJob(job._id)}
+                          className="flex items-center w-fit gap-3 cursor-pointer mt-3 text-red-500"
+                        >
+                          <Trash className="w-4" />
+                          <span>Delete</span>
                         </div>
                         <div
                           onClick={() =>

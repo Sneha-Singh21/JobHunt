@@ -151,3 +151,28 @@ export const updateStatus = async (req, res) => {
     });
   }
 };
+
+// Delete application by ID
+export const deleteApplication = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const application = await Application.findByIdAndDelete(id);
+
+    if (!application) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Application not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Application deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting application:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error deleting application",
+    });
+  }
+};
+
