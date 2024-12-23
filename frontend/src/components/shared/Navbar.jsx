@@ -7,7 +7,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
-import { USER_API_END_POINT } from "@/utils/constant.js";
 import { setUser } from "@/redux/authSlice.js";
 import { motion } from "framer-motion";
 
@@ -18,9 +17,12 @@ const Navbar = () => {
 
   const logoutHandler = async () => {
     try {
-      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/user/logout`,
+        {
+          withCredentials: true,
+        }
+      );
       if (res.data.success) {
         dispatch(setUser(null));
         navigate("/");

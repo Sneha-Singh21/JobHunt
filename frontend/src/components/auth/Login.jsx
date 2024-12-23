@@ -7,7 +7,6 @@ import { Button } from "../ui/button.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
-import { USER_API_END_POINT } from "@/utils/constant.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice.js";
 import { Loader2 } from "lucide-react";
@@ -39,12 +38,16 @@ const Login = () => {
 
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/user/login`,
+        input,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       if (res.data.success) {
         dispatch(setUser(res.data.user));

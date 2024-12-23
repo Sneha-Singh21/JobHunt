@@ -5,13 +5,11 @@ import { Input } from "../ui/input.jsx";
 import { RadioGroup } from "../ui/radio-group.jsx";
 import { Button } from "../ui/button.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import { USER_API_END_POINT } from "@/utils/constant.js";
 import axios from "axios";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "@/redux/authSlice.js";
-
 
 const Signup = () => {
   // taking data from the form
@@ -58,12 +56,16 @@ const Signup = () => {
 
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/user/register`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
 
       if (res.data.success) {
         navigate("/login");
@@ -88,7 +90,7 @@ const Signup = () => {
     <div>
       <Navbar />
       <div className="flex items-center justify-center max-w-7xl mx-auto">
-        <form 
+        <form
           onSubmit={submitHandler}
           className="w-1/2 border shadow-md border-gray-200 rounded-[10px] p-4 my-10"
         >

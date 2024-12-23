@@ -3,10 +3,6 @@ import { Badge } from "../ui/badge.jsx";
 import { Button } from "../ui/button.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import {
-  APPLICATION_API_END_POINT,
-  JOB_API_END_POINT,
-} from "@/utils/constant.js";
 import { setSingleJob } from "@/redux/jobSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
@@ -28,9 +24,12 @@ const JobDescription = () => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          `https://jobhunt-backend-jspd.onrender.com/api/v1/job/get/${jobId}`,
+          {
+            withCredentials: true,
+          }
+        );
 
         if (res.data.success) {
           dispatch(setSingleJob(res.data.job));
@@ -60,7 +59,7 @@ const JobDescription = () => {
   const applyJobHandler = async () => {
     try {
       const res = await axios.get(
-        `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/application/apply/${jobId}`,
         { withCredentials: true }
       );
 
@@ -89,7 +88,7 @@ const JobDescription = () => {
   const handleDeleteApplication = async () => {
     try {
       const res = await axios.delete(
-        `${APPLICATION_API_END_POINT}/delete/${jobId}`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/application/delete/${jobId}`,
         { withCredentials: true }
       );
 

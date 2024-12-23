@@ -5,7 +5,6 @@ import { Label } from "../ui/label.jsx";
 import { Input } from "../ui/input.jsx";
 import { Button } from "../ui/button.jsx";
 import axios from "axios";
-import { COMPANY_API_END_POINT } from "@/utils/constant.js";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setSingleCompany } from "@/redux/companySlice.js";
@@ -19,7 +18,7 @@ const CreateCompany = () => {
     try {
       const token = localStorage.getItem("token"); // Or however your token is stored
       const res = await axios.post(
-        `${COMPANY_API_END_POINT}/register`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/company/register`,
         { companyName },
         {
           headers: {

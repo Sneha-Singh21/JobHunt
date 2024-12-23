@@ -13,7 +13,6 @@ import { Edit2, Eye, MoreHorizontal, Trash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { JOB_API_END_POINT } from "@/utils/constant";
 import { removeJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
 
@@ -28,7 +27,7 @@ const AdminJobsTable = () => {
 
   const handleDeleteJob = async (jobId) => {
     try {
-      const res = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
+      const res = await axios.delete(`https://jobhunt-backend-jspd.onrender.com/api/v1/job/delete/${jobId}`, {
         withCredentials: true,
       });
 

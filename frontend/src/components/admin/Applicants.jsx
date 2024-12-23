@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import Navbar from "../shared/Navbar.jsx";
 import ApplicantsTable from "./ApplicantsTable.jsx";
 import { useParams } from "react-router-dom";
-import { APPLICATION_API_END_POINT } from "@/utils/constant.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllApplicants } from "@/redux/applicationSlice.js";
 import axios from "axios";
@@ -16,7 +15,7 @@ const Applicants = () => {
     const fetchAllApplicants = async () => {
       try {
         const res = await axios.get(
-          `${APPLICATION_API_END_POINT}/${params.id}/applicants`,
+          `https://jobhunt-backend-jspd.onrender.com/api/v1/application/${params.id}/applicants`,
           {
             withCredentials: true,
           }

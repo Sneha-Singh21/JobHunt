@@ -11,7 +11,6 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { setAllAppliedJobs } from "@/redux/jobSlice";
-import { APPLICATION_API_END_POINT } from "@/utils/constant.js";
 
 const AppliedJobTable = () => {
   const { allAppliedJobs } = useSelector((store) => store.job);
@@ -20,7 +19,7 @@ const AppliedJobTable = () => {
   const handleDeleteApplication = async (applicationId) => {
     try {
       const res = await axios.delete(
-        `${APPLICATION_API_END_POINT}/delete/${applicationId}`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/application/delete/${applicationId}`,
         {
           withCredentials: true,
         }

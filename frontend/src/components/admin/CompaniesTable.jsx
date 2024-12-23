@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { removeCompany } from "@/redux/companySlice"; // Import the removeCompany action
 import { toast } from "sonner"; // Import the toast for success/error messages
-import { COMPANY_API_END_POINT } from "@/utils/constant";
+
 
 const CompaniesTable = () => {
   const { companies, searchCompanyByText } = useSelector(
@@ -40,7 +40,7 @@ const CompaniesTable = () => {
   const handleDeleteCompany = async (companyId) => {
     try {
       const res = await axios.delete(
-        `${COMPANY_API_END_POINT}/delete/${companyId}`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/company/delete/${companyId}`,
         {
           withCredentials: true,
         }

@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/redux/authSlice.js";
 import { toast } from "sonner";
 import axios from "axios";
-import { USER_API_END_POINT } from "@/utils/constant.js";
 
 const UpdateProfileDialog = ({ open, setOpen }) => {
   const [loading, setLoading] = useState(false);
@@ -56,7 +55,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
     try {
       setLoading(true);
       const res = await axios.put(
-        `${USER_API_END_POINT}/profile/update`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/user/profile/update`,
         formData,
         {
           headers: {

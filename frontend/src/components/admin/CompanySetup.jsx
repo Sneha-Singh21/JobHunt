@@ -7,7 +7,6 @@ import { Input } from "../ui/input";
 import Footer from "../shared/Footer";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { COMPANY_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import useGetCompanyById from "@/hooks/useGetCompanyById";
@@ -55,7 +54,7 @@ const CompanySetup = () => {
     try {
       setLoading(true);
       const res = await axios.put(
-        `${COMPANY_API_END_POINT}/update/${params.id}`,
+        `https://jobhunt-backend-jspd.onrender.com/api/v1/company/update/${params.id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

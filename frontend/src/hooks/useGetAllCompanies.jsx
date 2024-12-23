@@ -1,5 +1,4 @@
 import { setCompanies } from "@/redux/companySlice.js";
-import { COMPANY_API_END_POINT } from "@/utils/constant.js";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -10,7 +9,7 @@ const useGetAllCompanies = () => {
     const fetchCompanies = async () => {
       try {
         const res = await axios.get(
-          `${COMPANY_API_END_POINT}/get`,
+          `https://jobhunt-backend-jspd.onrender.com/api/v1/company/get`,
           {
             withCredentials: true,
           }

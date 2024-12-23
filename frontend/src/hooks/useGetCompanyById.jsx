@@ -1,5 +1,4 @@
 import { setSingleCompany } from "@/redux/companySlice.js";
-import { COMPANY_API_END_POINT } from "@/utils/constant.js";
 import axios from "axios";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -16,7 +15,7 @@ const useGetCompanyById = (companyId) => {
     const fetchSingleCompany = async () => {
       try {
         const res = await axios.get(
-          `${COMPANY_API_END_POINT}/get/${companyId}`,
+          `https://jobhunt-backend-jspd.onrender.com/api/v1/company/get/${companyId}`,
           { withCredentials: true }
         );
 
@@ -26,7 +25,10 @@ const useGetCompanyById = (companyId) => {
           console.warn("Failed to fetch company data:", res.data.message);
         }
       } catch (error) {
-        console.error("Error fetching company:", error.response?.data || error.message);
+        console.error(
+          "Error fetching company:",
+          error.response?.data || error.message
+        );
       }
     };
 
