@@ -17,8 +17,12 @@ export const registerUser = async (req, res) => {
 
     // Handle file upload logic here if necessary
     const file = req.file;
+    if (!file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "File is missing" });
+    }
     const fileUri = getDataUri(file);
-    // console.log(fileUri);
 
     const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
@@ -83,7 +87,8 @@ export const loginUser = async (req, res) => {
     }
 
     // check if role is correct or not
-    if (role != user.role) {
+    if (role !== user.role) {
+      console.log("Role mismatch:", { expected: user.role, received: role });
       return res.status(400).json({
         success: false,
         message: "Account doesn't exist with current role.",
@@ -107,9 +112,10 @@ export const loginUser = async (req, res) => {
     return res
       .status(200)
       .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 1000,
-        httpsOnly: true,
-        sameSite: "strict",
+        maxAge: 1 * 24 * 60 * 60 * 1000, // Corrected: 1 day in milliseconds
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Secure only in production
+        sameSite: "strict", // or "lax" based on your frontend setup
       })
       .json({ success: true, message: `Welcome back ${user.fullName}`, user });
   } catch (error) {
@@ -121,10 +127,15 @@ export const loginUser = async (req, res) => {
 // logout user controller
 export const logoutUser = async (req, res) => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      success: true,
-      message: "Logged out successfully.",
-    });
+    return res
+      .status(200)
+      .cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      })
+      .json({ success: true, message: "Logged out successfully" });
   } catch (error) {
     console.log(error);
     return res.json({
@@ -141,6 +152,11 @@ export const updateProfile = async (req, res) => {
 
     // Handle file upload logic here if necessary
     const file = req.file;
+    if (!file) {
+      return res
+        .status(400)
+        .json({ success: false, message: "File is missing" });
+    }
     const fileUri = getDataUri(file);
 
     const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
