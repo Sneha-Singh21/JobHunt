@@ -1,3 +1,5 @@
+import jwt from "jsonwebtoken";
+
 const isAuthenticated = async (req, res, next) => {
   try {
     const token = req.cookies?.token; // Check for token in cookies
@@ -26,3 +28,5 @@ const isAuthenticated = async (req, res, next) => {
       .json({ success: false, message: "Authentication error" });
   }
 };
+
+export default isAuthenticated;
