@@ -109,13 +109,12 @@ export const loginUser = async (req, res) => {
       role: user.role,
       profile: user.profile,
     };
-    return res
-      .status(200)
+    res
       .cookie("token", token, {
-        maxAge: 1 * 24 * 60 * 60 * 1000, // Corrected: 1 day in milliseconds
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Secure only in production
-        sameSite: "strict", // or "lax" based on your frontend setup
+        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+        httpOnly: true, // Prevent client-side JS access
+        secure: process.env.NODE_ENV === "production", // HTTPS in production
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // Adjust for cross-domain dev
       })
       .json({ success: true, message: `Welcome back ${user.fullName}`, user });
   } catch (error) {
@@ -127,13 +126,12 @@ export const loginUser = async (req, res) => {
 // logout user controller
 export const logoutUser = async (req, res) => {
   try {
-    return res
-      .status(200)
+    res
       .cookie("token", "", {
-        maxAge: 0,
+        maxAge: 0, // Expire immediately
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
       })
       .json({ success: true, message: "Logged out successfully" });
   } catch (error) {

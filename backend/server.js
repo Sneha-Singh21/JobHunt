@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const corsOptions = {
-  origin: "https://jobhunt-ckcq.onrender.com", // Your frontend URL
+  origin: "http://localhost:5173", // Your frontend URL
   credentials: true, // Allow credentials (cookies)
 };
 

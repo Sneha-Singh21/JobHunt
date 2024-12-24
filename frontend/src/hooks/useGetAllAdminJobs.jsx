@@ -1,4 +1,5 @@
 import { setAllAdminJobs } from "@/redux/jobSlice.js";
+import { JOB_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -9,7 +10,7 @@ const useGetAllAdminJobs = () => {
     const fetchAllAdminJobs = async () => {
       try {
         const res = await axios.get(
-          `https://jobhunt-backend-jspd.onrender.com/api/v1/job/getadminjobs`,
+          `${JOB_API_END_POINT}/getadminjobs`,
           {
             withCredentials: true,
           }

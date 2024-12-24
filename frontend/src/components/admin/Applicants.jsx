@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllApplicants } from "@/redux/applicationSlice.js";
 import axios from "axios";
+import { APPLICATION_API_END_POINT } from "@/utils/constant.js";
 
 const Applicants = () => {
   const params = useParams();
@@ -15,7 +16,7 @@ const Applicants = () => {
     const fetchAllApplicants = async () => {
       try {
         const res = await axios.get(
-          `https://jobhunt-backend-jspd.onrender.com/api/v1/application/${params.id}/applicants`,
+          `${APPLICATION_API_END_POINT}/${params.id}/applicants`,
           {
             withCredentials: true,
           }

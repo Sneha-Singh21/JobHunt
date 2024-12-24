@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { removeJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
+import { JOB_API_END_POINT } from "@/utils/constant";
 
 const AdminJobsTable = () => {
   const { allAdminJobs, searchJobByText } = useSelector((store) => store.job);
@@ -27,7 +28,7 @@ const AdminJobsTable = () => {
 
   const handleDeleteJob = async (jobId) => {
     try {
-      const res = await axios.delete(`https://jobhunt-backend-jspd.onrender.com/api/v1/job/delete/${jobId}`, {
+      const res = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
         withCredentials: true,
       });
 
@@ -75,67 +76,65 @@ const AdminJobsTable = () => {
         </TableHeader>
         <TableBody>
           {Array.isArray(filterJobs) && filterJobs.length > 0 ? (
-            <>
-              {filterJobs.map((job) => (
-                <tr key={job._id || job.title}>
-                  <TableCell>{job?.company?.name || "N/A"}</TableCell>
-                  <TableCell>{job?.title || "N/A"}</TableCell>
-                  <TableCell>
-                    {job?.createdAt?.split("T")[0] || "N/A"}
-                  </TableCell>
-                  <TableCell className="cursor-pointer text-right pr-6">
-                    <Popover
-                      open={popoverState[job._id] || false}
-                      onOpenChange={(open) =>
-                        setPopoverState((prevState) => ({
-                          ...prevState,
-                          [job._id]: open,
-                        }))
-                      }
-                    >
-                      <PopoverTrigger>
-                        <MoreHorizontal />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-32 p-3">
-                        <div
-                          onClick={() =>
-                            navigate(
-                              `/admin/companies/${job.companyId || job._id}`
-                            )
-                          }
-                          className="flex items-center gap-4 w-fit cursor-pointer"
-                        >
-                          <Edit2 className="w-4" />
-                          <span>Edit</span>
-                        </div>
-                        <div
-                          onClick={() => handleDeleteJob(job._id)}
-                          className="flex items-center w-fit gap-3 cursor-pointer mt-3 text-red-500"
-                        >
-                          <Trash className="w-4" />
-                          <span>Delete</span>
-                        </div>
-                        <div
-                          onClick={() =>
-                            navigate(`/admin/jobs/${job._id}/applicants`)
-                          }
-                          className="flex items-center w-fit gap-3 cursor-pointer mt-3"
-                        >
-                          <Eye className="w-4" />
-                          <span>Applicants</span>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </TableCell>
-                </tr>
-              ))}
-            </>
+            filterJobs.map((job) => (
+              <TableRow key={job._id || job.title}>
+                <TableCell>{job?.company?.name || "N/A"}</TableCell>
+                <TableCell>{job?.title || "N/A"}</TableCell>
+                <TableCell>{job?.createdAt?.split("T")[0] || "N/A"}</TableCell>
+                <TableCell className="cursor-pointer text-right pr-6">
+                  <Popover
+                    open={popoverState[job._id] || false}
+                    onOpenChange={(open) =>
+                      setPopoverState((prevState) => ({
+                        ...prevState,
+                        [job._id]: open,
+                      }))
+                    }
+                  >
+                    <PopoverTrigger>
+                      <MoreHorizontal />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-32 p-3">
+                      <div
+                        onClick={() =>
+                          navigate(
+                            `/admin/companies/${job.companyId || job._id}`
+                          )
+                        }
+                        className="flex items-center gap-4 w-fit cursor-pointer"
+                      >
+                        <Edit2 className="w-4" />
+                        <span>Edit</span>
+                      </div>
+                      <div
+                        onClick={() => handleDeleteJob(job._id)}
+                        className="flex items-center w-fit gap-3 cursor-pointer mt-3 text-red-500"
+                      >
+                        <Trash className="w-4" />
+                        <span>Delete</span>
+                      </div>
+                      <div
+                        onClick={() =>
+                          navigate(`/admin/jobs/${job._id}/applicants`)
+                        }
+                        className="flex items-center w-fit gap-3 cursor-pointer mt-3"
+                      >
+                        <Eye className="w-4" />
+                        <span>Applicants</span>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </TableCell>
+              </TableRow>
+            ))
           ) : (
-            <div className="m-3">
-              <span className="text-sm text-red-600 font-medium">
-                *You haven't posted any jobs yet.
-              </span>
-            </div>
+            <TableRow>
+              <TableCell colSpan={4} className="text-center">
+                <span className="text-sm text-red-600 font-medium">
+                  *You haven't posted any jobs yet.
+                </span>
+              </TableCell>
+            </TableRow>
           )}
         </TableBody>
       </Table>

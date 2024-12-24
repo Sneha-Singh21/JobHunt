@@ -16,6 +16,7 @@ import {
 import axios from "axios";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { JOB_API_END_POINT } from "@/utils/constant.js";
 
 export const CreateAdminJob = () => {
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ export const CreateAdminJob = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`https://jobhunt-backend-jspd.onrender.com/api/v1/job/post`, input, {
+      const res = await axios.post(`${JOB_API_END_POINT}/post`, input, {
         headers: {
           "Content-Type": "application/json",
         },

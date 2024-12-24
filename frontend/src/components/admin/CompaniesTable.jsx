@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { removeCompany } from "@/redux/companySlice"; // Import the removeCompany action
 import { toast } from "sonner"; // Import the toast for success/error messages
-
+import { COMPANY_API_END_POINT } from "@/utils/constant";
 
 const CompaniesTable = () => {
   const { companies, searchCompanyByText } = useSelector(
@@ -40,7 +40,7 @@ const CompaniesTable = () => {
   const handleDeleteCompany = async (companyId) => {
     try {
       const res = await axios.delete(
-        `https://jobhunt-backend-jspd.onrender.com/api/v1/company/delete/${companyId}`,
+        `${COMPANY_API_END_POINT}/delete/${companyId}`,
         {
           withCredentials: true,
         }
@@ -74,53 +74,52 @@ const CompaniesTable = () => {
         </TableHeader>
         <TableBody>
           {filterCompany.length <= 0 ? (
-            <div className="m-3">
-              <span className="text-sm text-red-600 font-medium">
-                *You haven't registered any company yet.
-              </span>
-            </div>
+            <TableRow>
+              <TableCell colSpan={4} className="text-center">
+                <span className="text-sm text-red-600 font-medium">
+                  *You haven't registered any company yet.
+                </span>
+              </TableCell>
+            </TableRow>
           ) : (
-            <>
-              {filterCompany?.map((company) => (
-                <tr key={company._id}>
-                  <TableCell>
-                    <Avatar>
-                      <AvatarImage src={company?.logo || "/default-logo.png"} />
-                    </Avatar>
-                  </TableCell>
-                  <TableCell>{company?.name || "N/A"}</TableCell>
-                  <TableCell>
-                    {company?.createdAt?.split("T")[0] || "N/A"}
-                  </TableCell>
-
-                  <TableCell className="cursor-pointer text-right pr-6">
-                    <Popover>
-                      <PopoverTrigger>
-                        <MoreHorizontal />
-                      </PopoverTrigger>
-                      <PopoverContent className="w-32 p-3">
-                        <div
-                          onClick={() =>
-                            navigate(`/admin/companies/${company._id}`)
-                          }
-                          className="flex items-center gap-4 w-fit cursor-pointer"
-                        >
-                          <Edit2 className="w-4" />
-                          <span>Edit</span>
-                        </div>
-                        <div
-                          onClick={() => handleDeleteCompany(company._id)} // Call handleDeleteCompany when delete is clicked
-                          className="flex items-center w-fit gap-3 cursor-pointer mt-3 text-red-500"
-                        >
-                          <Trash className="w-4" />
-                          <span>Delete</span>
-                        </div>
-                      </PopoverContent>
-                    </Popover>
-                  </TableCell>
-                </tr>
-              ))}
-            </>
+            filterCompany?.map((company) => (
+              <TableRow key={company._id}>
+                <TableCell>
+                  <Avatar>
+                    <AvatarImage src={company?.logo || "/default-logo.png"} />
+                  </Avatar>
+                </TableCell>
+                <TableCell>{company?.name || "N/A"}</TableCell>
+                <TableCell>
+                  {company?.createdAt?.split("T")[0] || "N/A"}
+                </TableCell>
+                <TableCell className="cursor-pointer text-right pr-6">
+                  <Popover>
+                    <PopoverTrigger>
+                      <MoreHorizontal />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-32 p-3">
+                      <div
+                        onClick={() =>
+                          navigate(`/admin/companies/${company._id}`)
+                        }
+                        className="flex items-center gap-4 w-fit cursor-pointer"
+                      >
+                        <Edit2 className="w-4" />
+                        <span>Edit</span>
+                      </div>
+                      <div
+                        onClick={() => handleDeleteCompany(company._id)}
+                        className="flex items-center w-fit gap-3 cursor-pointer mt-3 text-red-500"
+                      >
+                        <Trash className="w-4" />
+                        <span>Delete</span>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </TableCell>
+              </TableRow>
+            ))
           )}
         </TableBody>
       </Table>

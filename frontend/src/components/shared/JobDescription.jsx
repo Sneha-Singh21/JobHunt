@@ -6,6 +6,7 @@ import axios from "axios";
 import { setSingleJob } from "@/redux/jobSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
+import { APPLICATION_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant.js";
 
 const JobDescription = () => {
   const { singleJob } = useSelector((store) => store.job);
@@ -25,7 +26,7 @@ const JobDescription = () => {
     const fetchJobDetails = async () => {
       try {
         const res = await axios.get(
-          `https://jobhunt-backend-jspd.onrender.com/api/v1/job/get/${jobId}`,
+          `${JOB_API_END_POINT}/get/${jobId}`,
           {
             withCredentials: true,
           }
@@ -59,7 +60,7 @@ const JobDescription = () => {
   const applyJobHandler = async () => {
     try {
       const res = await axios.get(
-        `https://jobhunt-backend-jspd.onrender.com/api/v1/application/apply/${jobId}`,
+        `${APPLICATION_API_END_POINT}/apply/${jobId}`,
         { withCredentials: true }
       );
 
@@ -88,7 +89,7 @@ const JobDescription = () => {
   const handleDeleteApplication = async () => {
     try {
       const res = await axios.delete(
-        `https://jobhunt-backend-jspd.onrender.com/api/v1/application/delete/${jobId}`,
+        `${APPLICATION_API_END_POINT}/delete/${jobId}`,
         { withCredentials: true }
       );
 

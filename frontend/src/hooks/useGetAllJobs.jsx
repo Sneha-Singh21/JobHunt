@@ -1,4 +1,5 @@
 import { setAllJobs } from "@/redux/jobSlice.js";
+import { JOB_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +12,7 @@ const useGetAllJobs = () => {
     const fetchAllJobs = async () => {
       try {
         const res = await axios.get(
-          `https://jobhunt-backend-jspd.onrender.com/api/v1/job/getalljobs?keyword=${searchedQuery}`,
+          `${JOB_API_END_POINT}/getalljobs?keyword=${searchedQuery}`,
           {
             withCredentials: true,
           }
